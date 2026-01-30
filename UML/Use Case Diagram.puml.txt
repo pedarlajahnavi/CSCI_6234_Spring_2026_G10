@@ -1,0 +1,69 @@
+@startuml
+skinparam packageStyle rectangle
+left to right direction
+
+actor "Admin" as admin
+actor "Branch Manager" as bm
+actor "Volunteer" as vol
+actor "Donor" as donor
+
+rectangle "NGO Management System" {
+        
+        ' Admin Use Cases
+        (Add Manager to Branch) as UC1
+        (View Managers of Region/Branch) as UC2
+        (View Volunteers by Region/Branch) as UC3
+        
+        ' Branch Manager Use Cases
+        (Add Volunteer to Branch) as UC4
+        (View Branch Volunteers) as UC5
+        (View Received Donations) as UC6
+        (Assign Donation for Pickup) as UC7
+        (Track Donation Status) as UC8
+        
+        ' Volunteer Use Cases
+        (View Assigned Donations) as UC9
+        (Mark Donation as Completed) as UC10
+        (View Completed History) as UC11
+        
+        ' Donor Use Cases
+        (Make Donation) as UC12
+        
+        ' Shared Use Case
+        (Login) as login
+        
+        ' Admin Connections
+        admin -- UC1
+        admin -- UC2
+        admin -- UC3
+        
+        ' Branch Manager Connections
+        bm -- UC4
+        bm -- UC5
+        bm -- UC6
+        bm -- UC7
+        bm -- UC8
+        
+        ' Volunteer Connections
+        vol -- UC9
+        vol -- UC10
+        vol -- UC11
+        
+        ' Donor Connections
+        donor -- UC12
+        
+        ' Include Relationships
+        UC1 ..> login : <<include>>
+        UC2 ..> login : <<include>>
+        UC3 ..> login : <<include>>
+        UC4 ..> login : <<include>>
+        UC5 ..> login : <<include>>
+        UC6 ..> login : <<include>>
+        UC7 ..> login : <<include>>
+        UC8 ..> login : <<include>>
+        UC9 ..> login : <<include>>
+        UC10 ..> login : <<include>>
+        UC11 ..> login : <<include>>
+}
+
+@enduml

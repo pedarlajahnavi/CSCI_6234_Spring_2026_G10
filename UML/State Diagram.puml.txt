@@ -1,0 +1,32 @@
+@startuml
+title State Diagram: Donation Lifecycle
+
+[*] --> Pending : Donor makes donation
+
+state "Pending (Received)" as Pending
+note right of Pending
+    Visible to Branch Manager.
+    Waiting to be assigned.
+end note
+
+Pending --> Assigned : Manager assigns to Volunteer
+
+state Assigned {
+}
+note right of Assigned
+    Visible to specific Volunteer.
+    Manager tracks this status.
+end note
+
+Assigned --> Completed : Volunteer marks task as done
+
+state Completed {
+}
+note right of Completed
+    Archived in Volunteer's history
+    and Manager's reports.
+end note
+
+Completed --> [*]
+
+@enduml

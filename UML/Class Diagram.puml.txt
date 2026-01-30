@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' Enumeration
+enum DonationStatus <<E>> {
+    PENDING
+    ASSIGNED
+    PICKED_UP
+    COMPLETED
+}
+
+' Abstract Class
+abstract class User <<A>> {
+    -userId : int
+    -name : String
+    -email : String
+    -password : String
+    +login() : boolean
+    +updateProfile() : void
+}
+
+' Specialized Classes
+class Admin <<C>> {
+    +addManager(manager : Manager) : void
+    +viewManagers(region : String) : List<Manager>
+    +viewVolunteers(region : String) : List<Volunteer>
+}
+
+class Manager <<C>> {
+    -branchName : String
+    -region : String
+    +addVolunteer(vol : Volunteer) : void
+    +viewVolunteers() : List<Volunteer>
+    +viewReceivedDonations() : List<Donation>
+    +assignDonation(donationId : int, volunteerId : int) : void
+    +trackStatus(donationId : int) : DonationStatus
+}
+
+class Donor <<C>> {
+    -address : String
+    +makeDonation(details : Donation) : void
+    +viewHistory() : List<Donation>
+}
+
+class Volunteer <<C>> {
+    -assignedBranch : String
+    +viewAssignedTasks() : List<Donation>
+    +markAsCompleted(donationId : int) : void
+    +viewCompletedHistory() : List<Donation>
+}
+
+class Donation <<C>> {
+    -donationId : int
+    -description : String
+    -amountOrItem : String
+    -pickupAddress : String
+    -status : DonationStatus
+    -createdDate : DateTime
+    +getStatus() : DonationStatus
+    +updateStatus(newStatus : DonationStatus) : void
+}
+
+' Relationships - Inheritance
+User <|-- Admin
+User <|-- Manager
+User <|-- Donor
+User <|-- Volunteer
+
+' Relationships - Associations and Multiplicity
+Admin "1" ..> "*" Manager : manages
+Manager "1" -- "*" Volunteer : supervises
+Donor "1" -- "*" Donation : creates
+Manager "1" -- "*" Donation : manages
+Volunteer "1" -- "*" Donation : picks up
+
+' Notes
+note "Manager assigns Donation\nto Volunteer" as N1
+(Manager, Volunteer) .. N1
+
+@enduml

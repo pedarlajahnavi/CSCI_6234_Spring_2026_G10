@@ -1,0 +1,125 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam responseMessageBelowArrow true
+
+title NGO System: End-to-End Sequence
+
+actor Admin
+actor "Branch Manager" as Manager
+actor Volunteer
+actor Donor
+participant "Web Portal" as UI
+participant "Backend System" as Backend
+database "Database" as DB
+
+'=======================================
+' PHASE 1: SYSTEM SETUP (Admin)
+'=======================================
+== Phase 1: Admin & Branch Setup ==
+
+Admin -> UI : Login()
+activate UI
+Admin -> UI : AddManager(BranchDetails, UserDetails)
+UI -> Backend : CreateManagerAccount()
+activate Backend
+Backend -> DB : Insert Manager & Branch
+activate DB
+DB --> Backend : Success
+deactivate DB
+Backend --> UI : Confirm Creation
+deactivate Backend
+UI --> Admin : "Manager Added"
+deactivate UI
+
+opt View Managers/Volunteers
+        Admin -> UI : ViewManagers(Region)
+        UI -> Backend : FetchManagers(Region)
+        Backend -> DB : Select * From Managers Where Region=X
+        DB --> Backend : Return List
+        Backend --> UI : Display List
+end
+
+'=======================================
+' PHASE 2: VOLUNTEER ONBOARDING
+'=======================================
+== Phase 2: Volunteer Onboarding ==
+
+Manager -> UI : Login()
+activate UI
+Manager -> UI : AddVolunteer(Details)
+UI -> Backend : CreateVolunteerProfile()
+activate Backend
+Backend -> DB : Insert Volunteer (Linked to Branch)
+activate DB
+DB --> Backend : Success
+deactivate DB
+Backend --> UI : Confirm Creation
+deactivate Backend
+UI --> Manager : "Volunteer Added"
+deactivate UI
+
+'=======================================
+' PHASE 3: DONATION WORKFLOW
+'=======================================
+== Phase 3: Donation & Fulfillment ==
+
+note over Donor : Donor initiates the process
+Donor -> UI : MakeDonation(Amount, PickupAddress)
+activate UI
+UI -> Backend : ProcessDonation()
+activate Backend
+Backend -> DB : Save Donation (Status: PENDING)
+activate DB
+DB --> Backend : ID: 101
+deactivate DB
+Backend --> UI : Receipt Generated
+deactivate Backend
+UI --> Donor : Show "Thank You"
+deactivate UI
+
+note over Manager : Manager monitors incoming donations
+Manager -> UI : ViewReceivedDonations()
+activate UI
+UI -> Backend : GetPendingDonations(BranchID)
+activate Backend
+Backend -> DB : Select * From Donations Where Branch=X AND Status='PENDING'
+activate DB
+DB --> Backend : Return List
+deactivate DB
+Backend --> UI : Display Donation List
+deactivate UI
+
+Manager -> UI : AssignDonation(DonationID: 101, VolunteerID: 55)
+activate UI
+UI -> Backend : AssignTask()
+activate Backend
+Backend -> DB : Update Donation Set Status='ASSIGNED', VolID=55
+activate DB
+DB --> Backend : Success
+deactivate DB
+Backend --> Volunteer : Notify(New Task Assigned)
+Backend --> UI : Update Dashboard
+deactivate Backend
+deactivate UI
+
+note over Volunteer : Volunteer performs the task
+Volunteer -> UI : ViewAssignedTasks()
+activate UI
+UI -> Backend : GetTasks(VolunteerID)
+Backend --> UI : Show Task (Donation 101)
+deactivate UI
+
+Volunteer -> UI : MarkAsCompleted(DonationID: 101)
+activate UI
+UI -> Backend : UpdateStatus('COMPLETED')
+activate Backend
+Backend -> DB : Update Donation Set Status='COMPLETED'
+activate DB
+DB --> Backend : Success
+deactivate DB
+Backend --> UI : Show Success Message
+deactivate Backend
+UI --> Volunteer : "Task Completed"
+deactivate UI
+@enduml

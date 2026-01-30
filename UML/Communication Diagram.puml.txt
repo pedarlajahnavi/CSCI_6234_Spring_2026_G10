@@ -1,0 +1,26 @@
+@startuml
+skinparam shadowing false
+skinparam actorStyle awesome
+
+' Elements
+actor "Donor" as donor
+actor "Admin" as admin
+actor "Branch Manager" as bm
+actor "Volunteer" as volunteer
+rectangle "NGO System" as system
+
+' Donor interactions
+donor - system : 1: makeDonation()
+
+' Admin interactions
+admin - system : 2: addManager()\n3: viewManagersByRegion()\n4: viewVolunteersByBranch()
+
+' Branch Manager interactions
+bm - system : 5: addVolunteer()\n6: viewVolunteers()\n7: viewBranchDonations()\n8: assignDonationToVolunteer()\n10: trackDonationStatus()
+
+' Volunteer interactions
+volunteer - system : 9: updateStatus(Completed)\n11: viewAssignedDonations()\n12: viewCompletedHistory()
+
+' Additional Notifications/Labels from source
+note top of volunteer : [Assignment Notification]
+@enduml

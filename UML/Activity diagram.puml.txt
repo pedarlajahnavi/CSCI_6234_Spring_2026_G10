@@ -1,0 +1,47 @@
+@startuml
+title NGO Donation Management Process
+
+|Donor|
+start
+:Make Donation; 
+:Enter Donation Details; 
+
+|System|
+:Validate Payment/Details; 
+if (Valid?) then (No) 
+    :Show Error Message; 
+    stop
+else (Yes) 
+    :Save Donation Record; 
+    :Notify Branch Manager; 
+endif
+
+|Branch Manager|
+:View Received Donations; 
+:Select Pending Donation; 
+:View Available Volunteers; 
+:Assign Donation to Volunteer; 
+
+|System|
+:Update Donation Status to "Assigned"; 
+:Notify Volunteer; 
+
+|Volunteer|
+:View Assigned Tasks; 
+:Perform Pickup / Task; 
+:Mark Donation as "Completed"; 
+
+|System|
+:Update Status to "Completed"; 
+:Log Completion History; 
+
+|Branch Manager|
+:View Donation Status (Completed); 
+
+|System|
+:Generate Receipt (Optional); 
+
+|Donor|
+:Receive Receipt; 
+stop
+@enduml
