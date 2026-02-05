@@ -1,0 +1,170 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+'=======================================
+' PRIMARY ACTORS (Left)
+'=======================================
+actor "Registered User" as User <<Primary>>
+note top of User
+  A generalized primary actor representing any account holder (Admin, Manager, 
+  Volunteer, Donor). This abstraction centralizes shared security features 
+  like authentication, ensuring that the password recovery process is 
+  standardized across the entire platform.
+end note
+
+actor "Admin" as Admin <<Primary>>
+note top of Admin
+  The highest-level authority responsible for the structural growth of the 
+  NGO. They initiate the creation of new geographical regions and physical 
+  branches, laying the foundation for the organization's expansion.
+end note
+
+actor "Branch Manager" as Manager <<Primary>>
+note left of Manager
+  The operational lead for a specific branch. They oversee the local 
+  volunteer workforce and manage the logistics of incoming donations, 
+  ensuring every contribution is assigned and tracked to completion.
+end note
+
+actor "Volunteer" as Volunteer <<Primary>>
+note bottom of Volunteer
+  The field operative who physically executes tasks. They interact with 
+  the system to view their specific assignments and report real-time 
+  completion status once a donation has been collected.
+end note
+
+actor "Donor" as Donor <<Primary>>
+note bottom of Donor
+  The external initiator of the value chain. They use the system to 
+  securely submit details about their contributions (funds or items), 
+  triggering the logistical workflow.
+end note
+
+'=======================================
+' SECONDARY ACTORS (Right)
+'=======================================
+actor "Email Service" as EmailSystem <<Secondary>>
+note right of EmailSystem
+  An external automated system triggered by the application to send 
+  One-Time Passwords (OTPs). This ensures secure, out-of-band identity 
+  verification during the password reset process.
+end note
+
+actor "Payment Gateway" as Bank <<Secondary>>
+note right of Bank
+  A secure external financial service that processes monetary transactions. 
+  It validates donor funds in real-time and returns transaction confirmations 
+  to the NGO system.
+end note
+
+' Inheritance
+User <|-- Admin
+User <|-- Manager
+User <|-- Volunteer
+User <|-- Donor
+
+'=======================================
+' SYSTEM BOUNDARY (Strictly 10 Use Cases)
+'=======================================
+package "NGO Management System" {
+
+  '--- 1. Security Core ---
+  usecase "Reset Password" as UC_Reset
+  note bottom of UC_Reset
+    Allows users to recover lost credentials. This workflow mandates 
+    identity verification via an external channel before any password 
+    updates are committed to the database.
+  end note
+
+  '--- 2. Security Sub-process ---
+  usecase "Verify OTP" as UC_OTP
+  note bottom of UC_OTP
+    A mandatory sub-process where the system validates the code sent 
+    via the Email Service. This step cannot be skipped during a 
+    password reset request.
+  end note
+
+  UC_Reset ..> UC_OTP : <<include>>
+
+  '--- 3. Admin Expansion ---
+  usecase "Manage Regions & Branches" as UC_Expand
+  note bottom of UC_Expand
+    Allows the Admin to scale the NGO by configuring new geographical 
+    regions and opening new physical branches in the database.
+  end note
+
+  '--- 4. Admin Workforce ---
+  usecase "Manage Branch Managers" as UC_AddMgr
+  note bottom of UC_AddMgr
+    The Admin's capability to create manager accounts and assign them 
+    to specific branches, effectively delegating operational authority.
+  end note
+
+  '--- 5. Manager Workforce ---
+  usecase "Manage Volunteers" as UC_AddVol
+  note bottom of UC_AddVol
+    The Branch Manager's capability to onboard local volunteers and 
+    maintain the roster of available staff for the specific branch.
+  end note
+
+  '--- 6. Donor Core ---
+  usecase "Make Donation" as UC_Donate
+  note bottom of UC_Donate
+    The public interface allowing Donors to submit contribution details. 
+    It integrates with the Payment Gateway for funds or logs item details 
+    for physical pickups.
+  end note
+
+  '--- 7. Donor Optional ---
+  usecase "Download Receipt" as UC_Receipt
+  note bottom of UC_Receipt
+    An optional feature that generates a proof of transaction for the donor. 
+    This extends the donation process by providing value for tax or record keeping.
+  end note
+
+  UC_Donate <.. UC_Receipt : <<extend>>
+
+  '--- 8. Operational Core ---
+  usecase "Assign Donation" as UC_Assign
+  note bottom of UC_Assign
+    The core workflow where a Manager reviews pending donations and 
+    links them to available volunteers, transitioning the task from 
+    'Received' to 'In Progress'.
+  end note
+
+  '--- 9. Operational Monitoring ---
+  usecase "Track Donation Status" as UC_Track
+  note bottom of UC_Track
+    Enables the Manager to monitor the lifecycle of a donation, 
+    ensuring accountability from the moment it is pledged until 
+    it is physically collected.
+  end note
+
+  '--- 10. Field Execution ---
+  usecase "Complete Pickup" as UC_Complete
+  note bottom of UC_Complete
+    The action taken by a Volunteer to mark an assigned task as finished 
+    after collection. This updates the central database and closes the 
+    ticket.
+  end note
+}
+
+'=======================================
+' CONNECTIONS
+'=======================================
+' Primary
+User -- UC_Reset
+Admin -- UC_Expand
+Admin -- UC_AddMgr
+Manager -- UC_AddVol
+Manager -- UC_Assign
+Manager -- UC_Track
+Volunteer -- UC_Complete
+Donor -- UC_Donate
+
+' Secondary
+UC_OTP -- EmailSystem
+UC_Donate -- Bank
+
+@enduml
