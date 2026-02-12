@@ -1,0 +1,34 @@
+@startuml
+!pragma teoz true
+title Robustness - UC7: Download Receipt
+hide footbox
+
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam dpi 200
+skinparam maxMessageSize 30
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 18
+
+actor "Donor" as Donor
+
+box "NGO Management System"
+boundary "History\nDashboard" as UI
+control "Report\nManager" as RptMgr
+database "Donation\nDB" as DonDB
+entity "File\nStore" as Files
+end box
+
+Donor -> UI : clickDownload(donationID)
+UI -> RptMgr : fetchReceipt(id)
+
+RptMgr -> DonDB : verifyOwnership(user, id)
+DonDB --> RptMgr : return(authorized)
+
+RptMgr -> Files : retrievePDF(path)
+Files --> RptMgr : return(stream)
+
+RptMgr --> UI : downloadStream()
+UI --> Donor : saveFile()
+@enduml

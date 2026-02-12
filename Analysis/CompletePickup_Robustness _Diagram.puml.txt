@@ -1,0 +1,36 @@
+@startuml
+!pragma teoz true
+title Robustness - UC10: Complete Pickup
+hide footbox
+
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam dpi 200
+skinparam maxMessageSize 30
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 18
+
+actor "Volunteer" as Vol
+
+box "NGO Management System"
+boundary "Mobile\nApp" as UI
+control "Task\nManager" as TaskMgr
+database "Donation\nDB" as DonDB
+entity "Geo\nService" as GPS
+entity "Audit\nLog" as Audit
+end box
+
+Vol -> UI : markComplete(donationID)
+UI -> TaskMgr : updateTask(status='Completed')
+
+TaskMgr -> GPS : validateLocation(coords)
+GPS --> TaskMgr : return(match)
+
+TaskMgr -> DonDB : updateStatus('Completed')
+TaskMgr -> DonDB : setTimestamp(now)
+TaskMgr -> Audit : logCompletion(user, time)
+
+TaskMgr --> UI : result(success)
+UI --> Vol : showSuccessAnimation()
+@enduml

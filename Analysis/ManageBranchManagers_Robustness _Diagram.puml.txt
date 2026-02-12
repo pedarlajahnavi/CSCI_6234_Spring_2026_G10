@@ -1,0 +1,36 @@
+@startuml
+!pragma teoz true
+title Robustness - UC4: Manage Branch Managers
+hide footbox
+
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam dpi 200
+skinparam maxMessageSize 30
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 18
+
+actor "Admin" as Admin
+
+box "NGO Management System"
+boundary "User Management\nUI" as UI
+control "Account\nController" as AccCtrl
+database "Branch\nDB" as BranchDB
+database "User\nDB" as UserDB
+control "Email\nService" as Email
+end box
+
+Admin -> UI : addManager(details, branchID)
+UI -> AccCtrl : onboardUser(payload)
+
+AccCtrl -> BranchDB : validateBranch(id)
+BranchDB --> AccCtrl : return(valid)
+
+AccCtrl -> UserDB : createUser(role='Manager')
+AccCtrl -> UserDB : linkToBranch(userID, branchID)
+AccCtrl -> Email : sendWelcomeEmail(creds)
+
+AccCtrl --> UI : result(created)
+UI --> Admin : displaySuccess()
+@enduml

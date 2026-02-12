@@ -1,0 +1,34 @@
+@startuml
+!pragma teoz true
+title Robustness - UC3: Manage Regions & Branches
+hide footbox
+
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam dpi 200
+skinparam maxMessageSize 30
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 18
+
+actor "Admin" as Admin
+
+box "NGO Management System"
+boundary "Admin\nConsole" as UI
+control "Organization\nManager" as OrgMgr
+database "Region\nDB" as RegionDB
+database "Branch\nDB" as BranchDB
+end box
+
+Admin -> UI : addRegion(name, location)
+UI -> OrgMgr : createStructure(payload)
+
+OrgMgr -> RegionDB : checkDuplicate(name)
+RegionDB --> OrgMgr : return(false)
+
+OrgMgr -> RegionDB : insertRegion()
+OrgMgr -> BranchDB : createDefaultBranch()
+
+OrgMgr --> UI : result(success)
+UI --> Admin : confirmation("Region Added")
+@enduml
