@@ -1,0 +1,9 @@
+This domain model shows the main parts of our NGO Management System and how they connect to make charity work easier.
+
+First, we look at the people involved. Everyone who logs into the platform is considered a general "User." This group includes Admins, Managers, Volunteers, and Donors. Because they are all users, they share basic security features. For example, they all use passwords and OTP (One-Time Password) checks to keep their accounts completely safe from hackers. The system also keeps an audit log to record important actions and sends out simple notifications to keep everyone updated.
+
+Next, we have the organization's physical structure. The NGO is divided into large Regions, and each Region contains multiple local Branches. An Admin is the only person who can create these locations in the system. Once a Branch is set up, a Manager is put in charge of it. This Manager oversees the daily tasks and guides the Volunteers who work at that specific location.
+
+The most important part of the model is handling the actual donations. A Donor enters a new Donation into the system, which can be funds, food, or clothing. The Branch Manager sees this new request while it is in a "Pending" status. They then assign it to an available Volunteer. The Volunteer goes out, picks up the items, and changes the status to "Completed."
+
+Finally, the system securely handles all financial records. If a Donor gives money, it links to a Payment Transaction. When the payment is successful, a Receipt is generated so the Donor has a clear record.
