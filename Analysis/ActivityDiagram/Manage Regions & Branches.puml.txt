@@ -1,0 +1,43 @@
+  @startuml
+title UC1 Activity - Manage Regions & Branches
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Admin logs into system.
+' Step 2: System validates login.
+' Step 3: Admin selects Manage Regions & Branches.
+' Step 4: Admin chooses Add / Update / Delete.
+' Step 5: Admin enters or selects details.
+' Step 6: System validates data.
+' Step 7: If valid, save changes.
+' Step 8: If invalid, show error message.
+' =========================================================
+
+(*) --> "1. Admin enters credentials"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Manage Regions & Branches"
+  --> "4. Choose action\n(Add / Update / Delete)"
+  --> "5. Enter / Select details"
+  --> "6. Validate input"
+
+  if "Data valid?" then
+    -->[Yes] "7. Save changes"
+    --> "Show confirmation"
+    --> (*)
+  else
+    -->[No] "8. Show validation error"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

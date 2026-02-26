@@ -1,0 +1,86 @@
+  @startuml
+title UC1 Activity - @startuml
+title UC2 Activity - Manage Branch Managers
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Admin enters username and password.
+' Step 2: System checks if the login details are correct.
+' Step 3: If login is valid, Admin selects Manage Branch Managers.
+' If login is invalid, system shows a login error and stops the process.
+' Step 4: Admin chooses to Add, Update, or Delete a branch manager.
+' Step 5: Admin enters or edits the manager details.
+' Step 6: System validates the entered information.
+' Step 7: If the data is correct, the system saves the manager record and shows a confirmation message.
+' If the data is incorrect, the system shows a validation error message.
+' =========================================================
+
+(*) --> "1. Admin enters credentials"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Manage Branch Managers"
+  --> "4. Choose Add / Update / Delete"
+  --> "5. Enter / Edit manager details"
+  --> "6. Validate data"
+
+  if "Data valid?" then
+    -->[Yes] "7. Save manager record"
+    --> "Show confirmation"
+    --> (*)
+  else
+    -->[No] "Show validation error"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Admin logs into system.
+' Step 2: System validates login.
+' Step 3: Admin selects Manage Regions & Branches.
+' Step 4: Admin chooses Add / Update / Delete.
+' Step 5: Admin enters or selects details.
+' Step 6: System validates data.
+' Step 7: If valid, save changes.
+' Step 8: If invalid, show error message.
+' =========================================================
+
+(*) --> "1. Admin enters credentials"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Manage Regions & Branches"
+  --> "4. Choose action\n(Add / Update / Delete)"
+  --> "5. Enter / Select details"
+  --> "6. Validate input"
+
+  if "Data valid?" then
+    -->[Yes] "7. Save changes"
+    --> "Show confirmation"
+    --> (*)
+  else
+    -->[No] "8. Show validation error"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

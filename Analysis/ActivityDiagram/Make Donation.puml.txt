@@ -1,0 +1,44 @@
+@startuml
+title UC7 Activity - Make Donation
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Donor logs in or registers a new account.
+' Step 2: System validates the login or registration details.
+' Step 3: If login is valid, Donor selects the Make Donation option.
+' If login is invalid, the system shows a login error and stops the process.
+' Step 4: Donor enters the donation details (amount, type, etc.).
+' Step 5: Donor submits the donation.
+' Step 6: System processes the payment.
+' Step 7: If payment is successful, the system generates a receipt and sends a confirmation email to the donor.
+' If payment fails, the system shows a payment failure message.
+' =========================================================
+
+(*) --> "1. Donor logs in / registers"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Make Donation"
+  --> "4. Enter donation details"
+  --> "5. Submit donation"
+  --> "6. Process payment"
+
+  if "Payment successful?" then
+    -->[Yes] "7. Generate receipt"
+    --> "Send confirmation email"
+    --> (*)
+  else
+    -->[No] "Show payment failure message"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

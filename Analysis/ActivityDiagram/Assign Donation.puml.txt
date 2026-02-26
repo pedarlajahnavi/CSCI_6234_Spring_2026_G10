@@ -1,0 +1,52 @@
+@startuml
+title UC5 Activity - Assign Donation
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+'=========================================================
+' Description
+' Step 1: Branch Manager logs in with username and password.
+' Step 2: System validates the login credentials.
+' Step 3: If login is valid, Branch Manager selects Assign Donation.
+' If login is invalid, the system shows a login error and stops the process.
+' Step 4: Branch Manager views the list of pending donations.
+' Step 5: If donations are available, Branch Manager selects a donation to assign.
+' Step 6: Branch Manager selects a volunteer for the donation.
+' Step 7: If a volunteer is available, the system confirms the assignment and updates the donation status to "Assigned".
+' If no volunteer is available, the system shows a "no volunteer available" message.
+' If no pending donations are found, the system shows a "no pending donations" message.
+' =========================================================
+
+(*) --> "1. Branch Manager logs in"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Assign Donation"
+  --> "4. View pending donations"
+
+  if "Donations available?" then
+    -->[Yes] "5. Select donation"
+    --> "6. Select volunteer"
+
+    if "Volunteer available?" then
+      -->[Yes] "7. Confirm assignment"
+      --> "Update status to Assigned"
+      --> (*)
+    else
+      -->[No] "Show no volunteer available message"
+      --> (*)
+    endif
+
+  else
+    -->[No] "Show no pending donations"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

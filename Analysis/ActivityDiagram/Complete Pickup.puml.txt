@@ -1,0 +1,51 @@
+@startuml
+title UC6 Activity - Complete Pickup
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Volunteer logs in with username and password.
+' Step 2: System validates the login credentials.
+' Step 3: If login is valid, Volunteer views the list of donations assigned to them.
+' If login is invalid, the system shows a login error and stops the process.
+' Step 4: If a donation is assigned, Volunteer goes to the pickup location.
+' Step 5: Volunteer collects the donation.
+' Step 6: Volunteer confirms the pickup.
+' Step 7: If confirmation is successful, the system updates the donation status to "Completed".
+' If confirmation fails, the system shows a confirmation error message.
+' If no donations are assigned, the system shows a "no assigned donations" message.
+' =========================================================
+
+(*) --> "1. Volunteer logs in"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. View assigned donations"
+
+  if "Donation assigned?" then
+    -->[Yes] "4. Go to pickup location"
+    --> "5. Collect donation"
+    --> "6. Confirm pickup"
+
+    if "Confirmation successful?" then
+      -->[Yes] "Update status to Completed"
+      --> (*)
+    else
+      -->[No] "Show confirmation error"
+      --> (*)
+    endif
+
+  else
+    -->[No] "Show no assigned donations"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

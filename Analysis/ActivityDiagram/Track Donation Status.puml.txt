@@ -1,0 +1,41 @@
+@startuml
+title UC4 Activity - Track Donation Status
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Branch Manager logs in with username and password.
+' Step 2: System validates the login credentials.
+' Step 3: If login is valid, Branch Manager selects Track Donation Status.
+' If login is invalid, the system shows a login error and stops the process.
+' Step 4: Branch Manager enters the Donation ID to track.
+' Step 5: System searches for the donation record.
+' Step 6: If the donation exists, the system displays the donation status.
+' If the donation is not found, the system shows a "not found" message.
+' =========================================================
+
+(*) --> "1. Branch Manager logs in"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Track Donation Status"
+  --> "4. Enter Donation ID"
+  --> "5. Search donation"
+
+  if "Donation found?" then
+    -->[Yes] "6. Display donation status"
+    --> (*)
+  else
+    -->[No] "Show not found message"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml

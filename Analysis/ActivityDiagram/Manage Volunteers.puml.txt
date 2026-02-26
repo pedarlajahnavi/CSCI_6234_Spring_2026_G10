@@ -1,0 +1,44 @@
+@startuml
+title UC3 Activity - Manage Volunteers
+top to bottom direction
+skinparam dpi 100
+skinparam linetype ortho
+skinparam shadowing false
+skinparam roundcorner 12
+
+' =========================================================
+' Description
+' Step 1: Branch Manager enters username and password.
+' Step 2: System checks if the login details are correct.
+' Step 3: If login is valid, Branch Manager selects Manage Volunteers.
+' If login is invalid, system shows a login error and stops the process.
+' Step 4: Branch Manager chooses to Add, Update, or Delete a volunteer.
+' Step 5: Branch Manager enters or edits the volunteer details.
+' Step 6: System validates the entered information.
+' Step 7: If the data is correct, the system saves the volunteer record and shows a confirmation message.
+' If the data is incorrect, the system shows a validation error message.
+' =========================================================
+
+(*) --> "1. Branch Manager enters credentials"
+--> "2. Validate login"
+
+if "Login valid?" then
+  -->[Yes] "3. Select Manage Volunteers"
+  --> "4. Choose Add / Update / Delete"
+  --> "5. Enter / Edit volunteer details"
+  --> "6. Validate details"
+
+  if "Data valid?" then
+    -->[Yes] "7. Save changes"
+    --> "Show confirmation"
+    --> (*)
+  else
+    -->[No] "Show validation error"
+    --> (*)
+  endif
+
+else
+  -->[No] "Show login error"
+  --> (*)
+endif
+@enduml
