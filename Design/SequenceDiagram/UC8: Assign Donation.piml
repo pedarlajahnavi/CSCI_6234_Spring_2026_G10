@@ -1,0 +1,38 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Manager
+
+box "NGO System" #LightGreen
+    participant "Task UI" as UI
+    control "Task Controller" as Ctrl
+    entity "Volunteer" as VolEnt
+    entity "Donation" as DonEnt
+end box
+
+Manager -> UI : assignTask(donId, volId)
+activate UI
+UI -> Ctrl : processAssignment(donId, volId)
+activate Ctrl
+
+Ctrl -> VolEnt : checkAvailability()
+activate VolEnt
+VolEnt --> Ctrl : true
+deactivate VolEnt
+
+Ctrl -> DonEnt : setVolunteer(volId)
+activate DonEnt
+DonEnt --> Ctrl : void
+deactivate DonEnt
+
+Ctrl -> DonEnt : updateStatus(ASSIGNED)
+activate DonEnt
+DonEnt --> Ctrl : void
+deactivate DonEnt
+
+Ctrl --> UI : assigned()
+deactivate Ctrl
+UI --> Manager : "Task Assigned"
+deactivate UI
+@enduml
