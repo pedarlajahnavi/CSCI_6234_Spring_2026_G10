@@ -1,0 +1,27 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Manager
+
+box "NGO System" #LightGreen
+    participant "Dashboard UI" as UI
+    control "Task Controller" as Ctrl
+    entity "Donation" as DonEnt
+end box
+
+Manager -> UI : viewDashboard()
+activate UI
+UI -> Ctrl : getStatus(session.branchId)
+activate Ctrl
+
+Ctrl -> DonEnt : getDonationsByBranch(session.branchId)
+activate DonEnt
+DonEnt --> Ctrl : list<Donation>
+deactivate DonEnt
+
+Ctrl --> UI : displayList()
+deactivate Ctrl
+UI --> Manager : "Display Status Grid"
+deactivate UI
+@enduml
