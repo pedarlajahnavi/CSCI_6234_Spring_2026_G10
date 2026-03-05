@@ -1,0 +1,33 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor "Volunteer" as ActorVolunteer
+
+box "NGO System" #LightGreen
+    participant "Task UI" as UI
+    control "Task Controller" as Ctrl
+    entity "Donation" as DonEnt
+    entity "Volunteer" as VolEnt
+end box
+
+ActorVolunteer -> UI : markComplete(donId)
+activate UI
+UI -> Ctrl : completeTask(donId)
+activate Ctrl
+
+Ctrl -> DonEnt : updateStatus(COMPLETED)
+activate DonEnt
+DonEnt --> Ctrl : void
+deactivate DonEnt
+
+Ctrl -> VolEnt : setAvailability(true)
+activate VolEnt
+VolEnt --> Ctrl : void
+deactivate VolEnt
+
+Ctrl --> UI : success()
+deactivate Ctrl
+UI --> ActorVolunteer : "Status Updated successfully"
+deactivate UI
+@enduml
