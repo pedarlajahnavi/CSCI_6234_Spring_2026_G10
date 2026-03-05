@@ -1,0 +1,32 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Donor
+
+box "NGO System" #Thistle
+    participant "Donation UI" as UI
+    control "Donation Controller" as Ctrl
+    entity "Receipt" as ReceiptEnt
+end box
+
+Donor -> UI : downloadReceipt(txId)
+activate UI
+UI -> Ctrl : getReceipt(txId)
+activate Ctrl
+
+Ctrl -> ReceiptEnt : generateReceipt(txId)
+activate ReceiptEnt
+ReceiptEnt --> Ctrl : receiptObj
+deactivate ReceiptEnt
+
+Ctrl -> ReceiptEnt : getPdfDocumentUrl()
+activate ReceiptEnt
+ReceiptEnt --> Ctrl : pdfUrl
+deactivate ReceiptEnt
+
+Ctrl --> UI : returnUrl(pdfUrl)
+deactivate Ctrl
+UI --> Donor : triggerDownload(pdfUrl)
+deactivate UI
+@enduml
