@@ -1,0 +1,27 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Admin
+
+box "NGO System" #LightYellow
+    participant "Dashboard UI" as UI
+    control "Operations Controller" as Ctrl
+    entity "Manager" as MgrEnt
+end box
+
+Admin -> UI : assignManager(details, branchId)
+activate UI
+UI -> Ctrl : addManager(details, branchId)
+activate Ctrl
+
+Ctrl -> MgrEnt : registerManager(details, branchId)
+activate MgrEnt
+MgrEnt --> Ctrl : newManager
+deactivate MgrEnt
+
+Ctrl --> UI : managerAdded()
+deactivate Ctrl
+UI --> Admin : "Manager Assigned"
+deactivate UI
+@enduml
