@@ -1,0 +1,33 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Admin
+
+box "NGO System" #LightYellow
+    participant "Dashboard UI" as UI
+    control "Operations Controller" as Ctrl
+    entity "Region" as RegionEnt
+    entity "Branch" as BranchEnt
+end box
+
+Admin -> UI : addLocation(regionName, branchName)
+activate UI
+UI -> Ctrl : processLocation(regionName, branchName)
+activate Ctrl
+
+Ctrl -> RegionEnt : createRegion(regionName)
+activate RegionEnt
+RegionEnt --> Ctrl : newRegion
+deactivate RegionEnt
+
+Ctrl -> BranchEnt : createBranch(branchName, addr, newRegion.regionId)
+activate BranchEnt
+BranchEnt --> Ctrl : newBranch
+deactivate BranchEnt
+
+Ctrl --> UI : success()
+deactivate Ctrl
+UI --> Admin : "Location Added successfully"
+deactivate UI
+@enduml
