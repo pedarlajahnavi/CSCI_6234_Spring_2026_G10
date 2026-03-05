@@ -1,0 +1,41 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Donor
+actor "Payment Gateway" as Bank
+
+box "NGO System" #Thistle
+    participant "Donation UI" as UI
+    control "Donation Controller" as Ctrl
+    entity "PaymentTransaction" as PaymentEnt
+    entity "Donation" as DonEnt
+end box
+
+Donor -> UI : submitDonation(details, amount)
+activate UI
+UI -> Ctrl : processDonation(details, amount)
+activate Ctrl
+
+opt amount > 0
+    Ctrl -> Bank : processCharge(amount)
+    activate Bank
+    Bank --> Ctrl : success
+    deactivate Bank
+    
+    Ctrl -> PaymentEnt : processPayment(amount, "Card")
+    activate PaymentEnt
+    PaymentEnt --> Ctrl : txObj
+    deactivate PaymentEnt
+end
+
+Ctrl -> DonEnt : createDonation(details, session.userId)
+activate DonEnt
+DonEnt --> Ctrl : donationObj
+deactivate DonEnt
+
+Ctrl --> UI : success()
+deactivate Ctrl
+UI --> Donor : "Donation Received"
+deactivate UI
+@enduml
