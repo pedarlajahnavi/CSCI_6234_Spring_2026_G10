@@ -1,0 +1,199 @@
+@startuml
+skinparam linetype ortho
+skinparam nodesep 70
+skinparam ranksep 90
+skinparam roundcorner 8
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+'=======================================
+' 1. IDENTITY & ACCESS (Top-Left)
+'=======================================
+package "Identity & Access Management" {
+    
+    abstract class User {
+        - userId : UUID
+        - emailid : String
+        - fullname : String
+        - contactno : String
+        - passwordHash : String
+        - role : RoleType
+        --
+        + findByEmail(email: String) : User
+        + updatePasswordHash(newHash: String) : void
+    }
+
+    enum RoleType {
+        ADMIN
+        MANAGER
+        VOLUNTEER
+        DONOR
+    }
+
+    class Administrator {
+        - adminLevel : String
+    }
+
+    class Manager {
+        - department : String
+        --
+        + registerManager(details: String, branchId: UUID) : Manager
+    }
+
+    class Volunteer {
+        - isAvailable : Boolean
+        --
+        + registerVolunteer(details: String, branchId: UUID) : Volunteer
+        + checkAvailability() : Boolean
+        + setAvailability(status: Boolean) : void
+    }
+
+    class Donor {
+        - donorTier : String
+    }
+
+    User .right.> RoleType
+    User <|-down- Administrator
+    User <|-down- Manager
+    User <|-down- Volunteer
+    User <|-down- Donor
+
+    Administrator -[hidden]right- Manager
+    Manager -[hidden]right- Volunteer
+    Volunteer -[hidden]right- Donor
+}
+
+'=======================================
+' 2. SECURITY & GOVERNANCE (Top-Right)
+'=======================================
+package "Security & Governance" {
+    
+    class OTPVerification {
+        - otpId : UUID
+        - code : String
+        - generatedAt : DateTime
+        - expiresAt : DateTime
+        - isUsed : Boolean
+        --
+        + generateOTP(userId: UUID) : OTPVerification
+        + validateCode(inputCode: String) : Boolean
+        + markAsUsed() : void
+    }
+
+    class AuditEvent {
+        - eventId : UUID
+        - action : String
+        - timestamp : DateTime
+        - status : String
+    }
+    
+    class Notification {
+        - notificationId : UUID
+        - messageText : String
+        - sentAt : DateTime
+        --
+        + sendOTPNotification(contact: String, code: String) : void
+    }
+    
+    OTPVerification -[hidden]down- AuditEvent
+    AuditEvent -[hidden]down- Notification
+}
+
+'=======================================
+' 3. CORE NGO OPERATIONS (Bottom-Left)
+'=======================================
+package "Core NGO Operations" {
+    
+    class Region {
+        - regionId : UUID
+        - regionName : String
+        --
+        + createRegion(name: String) : Region
+    }
+
+    class Branch {
+        - branchId : UUID
+        - branchName : String
+        - address : String
+        --
+        + createBranch(name: String, addr: String, regId: UUID) : Branch
+    }
+
+    class Donation {
+        - donationId : UUID
+        - pickupTime : DateTime
+        - pickupLocation : String
+        - donationCategory : DonationCategory
+        - status : DonationStatus
+        --
+        + createDonation(details: String, donorId: UUID) : Donation
+        + setVolunteer(volunteerId: UUID) : void
+        + updateStatus(newStatus: DonationStatus) : void
+        + getDonationsByBranch(branchId: UUID) : List<Donation>
+    }
+    
+    enum DonationStatus {
+        PENDING
+        ASSIGNED
+        COMPLETED
+    }
+    
+    enum DonationCategory {
+        FUNDS
+        FOOD
+        CLOTHING
+    }
+
+    Region "1" *-right- "1..*" Branch : contains >
+    Donation .down.> DonationStatus
+    Donation .down.> DonationCategory
+    Branch -[hidden]right- Donation
+}
+
+'=======================================
+' 4. FINANCIAL & RECORDS (Bottom-Right)
+'=======================================
+package "Financial & Records" {
+    
+    class PaymentTransaction {
+        - transactionId : UUID
+        - amount : float
+        - currency : String
+        - paymentMethod : String
+        - processedAt : DateTime
+        --
+        + processPayment(amount: float, method: String) : PaymentTransaction
+    }
+
+    class Receipt {
+        - receiptId : UUID
+        - pdfDocumentUrl : String
+        - generatedAt : DateTime
+        --
+        + generateReceipt(txId: UUID) : Receipt
+        + getPdfDocumentUrl() : String
+    }
+    
+    PaymentTransaction "1" -right- "1" Receipt : generates >
+}
+
+' Layout Forcing
+"Identity & Access Management" -[hidden]down-> "Core NGO Operations"
+"Security & Governance" -[hidden]down-> "Financial & Records"
+"Identity & Access Management" -[hidden]right-> "Security & Governance"
+
+' Cross-Package Associations
+User "1" -right-> "0..*" OTPVerification : requests >
+User "1" -right-> "0..*" AuditEvent : generates >
+User "1" -right-> "0..*" Notification : receives >
+
+Manager "1" -down-> "1" Branch : manages >
+Volunteer "0..*" -down-> "1" Branch : assigned to >
+
+Manager "1" -down-> "0..*" Donation : assigns >
+Volunteer "1" -down-> "0..*" Donation : executes >
+Donor "1" -down-> "1..*" Donation : initiates >
+
+Donation "1" -right-> "0..1" PaymentTransaction : involves >
+
+@enduml
