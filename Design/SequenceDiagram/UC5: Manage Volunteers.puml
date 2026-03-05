@@ -1,0 +1,27 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor Manager
+
+box "NGO System" #LightYellow
+    participant "Dashboard UI" as UI
+    control "Operations Controller" as Ctrl
+    entity "Volunteer" as VolEnt
+end box
+
+Manager -> UI : addVolunteer(details)
+activate UI
+UI -> Ctrl : addVolunteer(details, session.branchId)
+activate Ctrl
+
+Ctrl -> VolEnt : registerVolunteer(details, session.branchId)
+activate VolEnt
+VolEnt --> Ctrl : newVolunteer
+deactivate VolEnt
+
+Ctrl --> UI : volunteerAdded()
+deactivate Ctrl
+UI --> Manager : "Volunteer Onboarded"
+deactivate UI
+@enduml
