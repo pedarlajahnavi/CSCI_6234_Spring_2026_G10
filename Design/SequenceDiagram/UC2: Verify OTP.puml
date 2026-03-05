@@ -1,0 +1,42 @@
+@startuml
+autonumber
+skinparam style strictuml
+skinparam maxMessageSize 150
+actor "Registered User" as ActorUser
+
+box "NGO System" #LightCyan
+    participant "Security UI" as UI
+    control "Security Controller" as Ctrl
+    entity "OTPVerification" as OTPEnt
+    entity "User" as UserEnt
+end box
+
+ActorUser -> UI : submitOTP(code)
+activate UI
+UI -> Ctrl : verifyOTP(code)
+activate Ctrl
+
+Ctrl -> OTPEnt : validateCode(code)
+activate OTPEnt
+OTPEnt --> Ctrl : isValid
+deactivate OTPEnt
+
+alt isValid == true
+    Ctrl -> OTPEnt : markAsUsed()
+    activate OTPEnt
+    OTPEnt --> Ctrl : void
+    deactivate OTPEnt
+    
+    Ctrl -> UserEnt : updatePasswordHash(newHash)
+    activate UserEnt
+    UserEnt --> Ctrl : void
+    deactivate UserEnt
+    
+    Ctrl --> UI : success()
+else
+    Ctrl --> UI : error()
+end
+deactivate Ctrl
+UI --> ActorUser : displayResult()
+deactivate UI
+@enduml
